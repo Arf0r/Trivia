@@ -24,36 +24,40 @@ public class HighScoreRequest implements Response.Listener<JSONArray>, Response.
         this.context = incomingContext;
     }
 
+    // If server responds with error, save the error message
     @Override
     public void onErrorResponse(VolleyError error) {
         String message = callback.gotHighScoreError(error.getMessage());
-        Log.d("tag", message);
     }
 
+    // If server responds as expected...
     @Override
     public void onResponse(JSONArray response) {
+        // Make a new arraylist
         ArrayList arrayList = new ArrayList();
-        Log.d("tag", "getHighScore: ");
         try {
-            Log.d("tag", "getHighScore: ");
+            // Save the response as JSONARRAY
             JSONArray highScoreList = response;
+
+            // Loop over JSONARRAY and add the highscore data to list
             for (int i = 0; i < highScoreList.length(); i++){
                 arrayList.add(highScoreList.getString(i));
             }
-            Log.d("tag", String.valueOf(arrayList));
+            // Return list via callback
             callback.gotHighScore(arrayList);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
+    // Return variables to request page
     public interface Callback {
         void gotHighScore(ArrayList<String> HighScore);
         String gotHighScoreError(String message);
     }
 
+    // Make the request from the server
     public void getHighScore(Callback activity) {
-        Log.d("tag", "1");
         this.callback = activity;
         String url = "https://ide50-maarten-wijstma.legacy.cs50.io:8080/highscores2";
         RequestQueue queue = Volley.newRequestQueue(context);
